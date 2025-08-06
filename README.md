@@ -1,69 +1,81 @@
-# React + TypeScript + Vite
+# Pogodoc React Starter Template
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a starter project for creating [Pogodoc](https://pogodoc.com) document templates using React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+It provides a basic setup to get you started quickly with building dynamic and complex document templates.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## Expanding the ESLint configuration
+To get the development server running:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1.  Install the dependencies:
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+    ```bash
+    npm install
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+2.  Start the development server:
+    ```bash
+    npm run dev
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+
+Here are the key files in this project:
+
+- `src/App.tsx`: The main application component. This is a great place to start building your template's UI.
+- `src/config.ts`: A helper file to access the data injected by Pogodoc in a type-safe manner.
+
+## Accessing Template Data
+
+When Pogodoc renders your template, it injects your JSON data into the `window` object under the `__POGODOC_DATA__` property.
+
+This starter project includes a pre-configured helper file at `src/config.ts` to access this data easily:
+
+```ts
+declare global {
+  interface Window {
+    // eslint-disable-next-line
+    __POGODOC_DATA__: any;
+  }
+}
+
+export const pogodocData = window.__POGODOC_DATA__;
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This code declares a global `__POGODOC_DATA__` property on the `window` object and exports the data for easy use throughout your application.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Example Usage
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+You can import and use this data in any of your components. Here's an example from `src/App.tsx` that displays a `name` property from the injected data:
+
+```tsx
+import { pogodocData } from "./config";
+
+function App() {
+  return (
+    <div>
+      <h1>Hello, {pogodocData.name}!</h1>
+      {/* Rest of your template */}
+    </div>
+  );
+}
+
+export default App;
 ```
+
+When you run this template in Pogodoc with data like `{"name": "John Doe"}`, it will render "Hello, John Doe!".
+
+## Building Your Template
+
+After you have finished creating your template, you need to build it to generate the static HTML, CSS, and JavaScript files.
+
+Run the build command:
+
+```bash
+npm run build
+```
+
+This will create a `dist` directory containing your bundled application. You can then zip the contents of the `dist` folder and upload it to Pogodoc as a new template.
+
+> ⚠️ **Important:** Only the contents of the `dist` folder should be zipped, not the `dist` folder itself.
